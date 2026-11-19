@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- The one DeskHive email layout: wordmark, headline, optional booking card, one rose button, a footnote.
+     Every email (invitation, confirmation, reminder, release, admin cancellation, password reset) uses it.
+     th:text escapes every value, so a person's name or an admin's reason can't inject HTML. -->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${headline}">DeskHive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&amp;display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background-color:#f7f7f8;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f7f7f8;">
+  <tr>
+    <td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+             style="max-width:560px;background-color:#ffffff;border:1px solid #e4e4e7;border-radius:16px;overflow:hidden;">
+        <tr>
+          <td style="padding:22px 24px 0 24px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="vertical-align:middle;"><img src="cid:logo@deskhive" width="28" height="28" alt="" style="display:block;border:0;"></td>
+                <td style="vertical-align:middle;padding-left:8px;font:800 18px Manrope,Arial,sans-serif;color:#1b1b1f;">DeskHive</td>
+              </tr>
+            </table>
+            <div style="font:800 22px/1.25 Manrope,Arial,sans-serif;margin-top:18px;color:#1b1b1f;" th:text="${headline}">You're booked</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:14px 24px 24px 24px;font:500 14px/1.55 Manrope,Arial,sans-serif;color:#2b2b31;">
+            <p style="margin:0 0 14px;" th:each="paragraph : ${paragraphs}" th:text="${paragraph}">Intro</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" th:if="${!details.isEmpty()}"
+                   style="margin:0 0 18px;background-color:#f7f7f8;border:1px solid #e4e4e7;border-radius:12px;">
+              <tr th:each="detail : ${details}">
+                <td style="padding:10px 14px;font:700 12px Manrope,Arial,sans-serif;color:#63636b;width:90px;vertical-align:top;" th:text="${detail.label()}">When</td>
+                <td style="padding:10px 14px;font:700 14px/1.45 Manrope,Arial,sans-serif;color:#1b1b1f;" th:text="${detail.value()}">Tue 20 Oct</td>
+              </tr>
+            </table>
+            <a th:href="${buttonUrl}" href="#"
+               style="display:inline-block;background-color:#e11d48;background-image:linear-gradient(120deg,#e11d48,#db2777 55%,#be123c);color:#ffffff;text-decoration:none;border-radius:12px;padding:11px 18px;font:800 15px Manrope,Arial,sans-serif;"
+               th:text="${buttonLabel}">View booking</a>
+            <p style="font-size:12px;color:#63636b;margin:18px 0 0;border-top:1px solid #e4e4e7;padding-top:12px;" th:text="${footnote}">Footnote</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
