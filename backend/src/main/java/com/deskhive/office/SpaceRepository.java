@@ -7,19 +7,16 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
-
-import jakarta.persistence.LockModeType;
 
 public interface SpaceRepository extends JpaRepository<Space, Long> {
 
     /**
      * SELECT ... FOR UPDATE on one space row. Every booking of this space waits here, one at a time:
-     * this lock is what makes "no overlapping bookings" safe (see BookingService).
+     * this lock is what makes "no overlapping bookings" safe (see BookingService). Plain
+     * SELECT ... FOR UPDATE: Hibernate's lock mode would add "OF <alias>", which TiDB refuses.
      */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select s from Space s where s.id = :id")
+    @Query(value = "select * from spaces where id = :id for update", nativeQuery = true)
     Optional<Space> lockById(Long id);
 
     List<Space> findByFloorId(Long floorId);

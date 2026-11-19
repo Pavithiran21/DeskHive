@@ -10,12 +10,9 @@ import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.persistence.LockModeType;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
@@ -25,9 +22,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select coalesce(b.spaceId, 0L) from Booking b where b.id = :id and b.userId = :userId")
     Optional<Long> findOwnedSpaceId(Long id, Long userId);
 
-    /** SELECT ... FOR UPDATE on one booking: change, cancel and check-in take it before reading the status. */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select b from Booking b where b.id = :id")
+    /**
+     * SELECT ... FOR UPDATE on one booking: change, cancel and check-in take it before reading the status.
+     * Plain SQL: Hibernate's lock mode would add "OF <alias>", which TiDB refuses.
+     */
+    @Query(value = "select * from bookings where id = :id for update", nativeQuery = true)
     Optional<Booking> lockById(Long id);
 
     /**

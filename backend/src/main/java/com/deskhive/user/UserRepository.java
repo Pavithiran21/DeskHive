@@ -5,10 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
-
-import jakarta.persistence.LockModeType;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -20,14 +17,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     long countByOfficeId(Long officeId);
 
-    /** SELECT ... FOR UPDATE: the first lock a booking transaction takes (see BookingService). */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select u from User u where u.id = :id")
+    /**
+     * SELECT ... FOR UPDATE: the first lock a booking transaction takes (see BookingService). Plain
+     * SQL: Hibernate's lock mode would add "OF <alias>", which TiDB refuses.
+     */
+    @Query(value = "select * from users where id = :id for update", nativeQuery = true)
     Optional<User> lockById(Long id);
 
     /** Locks every active Admin row (in id order), so two Admins can't both delete themselves as "not the last one". */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select u from User u where u.role = com.deskhive.user.Role.ADMIN and u.status = com.deskhive.user.UserStatus.ACTIVE order by u.id")
+    @Query(value = "select * from users where role = 'ADMIN' and status = 'ACTIVE' order by id for update", nativeQuery = true)
     java.util.List<User> lockActiveAdmins();
 
     /** People screen: everyone except people who deleted their account, optionally filtered by name or email. */

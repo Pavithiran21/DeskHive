@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/Pavithiran21/DeskHive/actions/workflows/ci.yml/badge.svg)](https://github.com/Pavithiran21/DeskHive/actions/workflows/ci.yml)
 
+**Live demo: [deskhive-pavithiran.onrender.com/demo](https://deskhive-pavithiran.onrender.com/demo)** (log in as an Employee or an Admin in one click). It runs on free hosting, so the first load after a quiet spell can take a minute or two.
+
 Desk and meeting-room booking for hybrid offices. Employees see what is free on the days they come in, then book, change, check in to and cancel desks and rooms. Admins set up offices, floors and spaces, set the booking rules, invite people and see how the space is used. Bookings nobody turns up for release themselves.
 
 **Java 21 · Spring Boot 4 · MySQL 8.4 · Flyway · React 19 · TanStack Query · Tailwind CSS 4 · Playwright**
@@ -176,10 +178,12 @@ npm test        # writes .env.test, builds the jar, creates and seeds deskhive_t
 
 One free [Render](https://render.com) web service from the `Dockerfile` (see [`render.yaml`](render.yaml)): Spring Boot serves the built frontend, so the app, the API and the refresh cookie share one origin. Flyway migrates on every start.
 
-- **Database:** a hosted MySQL 8.4 such as Aiven's free plan, with a `deskhive_demo` database. Aiven requires TLS, so set `SPRING_DATASOURCE_URL` with `sslMode=REQUIRED` (see `render.yaml`). Use a real MySQL: the booking locks depend on InnoDB.
+- **Database:** a free hosted MySQL-compatible database such as [TiDB Cloud](https://tidbcloud.com) Starter, with a `deskhive_demo` database. It requires TLS, so set `SPRING_DATASOURCE_URL` with `sslMode=VERIFY_IDENTITY` (see `render.yaml`). The row locks behind the booking guarantee are plain `SELECT … FOR UPDATE` statements (TiDB refuses the `FOR UPDATE OF <alias>` form that Hibernate's lock mode would send), and the whole Playwright suite, including the 20-people-one-desk test, passes on TiDB and on MySQL 8.4.
 - **Settings:** `APP_ENV=production`, `SERVER_FORWARD_HEADERS_STRATEGY=native` (so rate limits see the visitor's IP behind Render's proxy), `DEMO_MODE=true`, `FRONTEND_URL` = the service URL, and SMTP plus `DEMO_SMTP_*`.
-- **Demo data:** run the `seed-demo` profile once from the service's Shell.
+- **Demo data:** free Render has no Shell, so run the `seed-demo` profile once from your own machine, pointed at the same database.
+- **Memory:** the image caps the JVM heap at half of the free plan's 512 MB, and the app stays near 360 MB under load.
 - **Jobs:** free services sleep after 15 minutes without traffic, so an external cron (e.g. cron-job.org, every 5 minutes) calls `POST /api/internal/jobs/release` and `/reminders` with the `X-Job-Secret` header.
+- **Email on free hosting:** Render's free plan blocks outbound SMTP, so the live demo sends no invitation, reminder or password-reset email, and an Admin's invitation link can't be used there; everything else works. Paid hosting or an email provider with an HTTPS API would lift this.
 
 ## Demo videos
 

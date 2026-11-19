@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
-
-import jakarta.persistence.LockModeType;
 
 public interface FloorRepository extends JpaRepository<Floor, Long> {
 
@@ -25,8 +22,10 @@ public interface FloorRepository extends JpaRepository<Floor, Long> {
 
     long countByOfficeId(Long officeId);
 
-    /** Locked while spaces are added or the floor is deleted, so the two can't pass each other. */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select f from Floor f where f.id = :id")
+    /**
+     * Locked while spaces are added or the floor is deleted, so the two can't pass each other. Plain
+     * SELECT ... FOR UPDATE: Hibernate's lock mode would add "OF <alias>", which TiDB refuses.
+     */
+    @Query(value = "select * from floors where id = :id for update", nativeQuery = true)
     Optional<Floor> lockById(Long id);
 }
