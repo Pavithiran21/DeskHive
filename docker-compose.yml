@@ -45,6 +45,11 @@ services:
       SMTP_USER: ${SMTP_USER:-set-me}
       SMTP_PASS: ${SMTP_PASS:-set-me}
       SMTP_FROM: ${SMTP_FROM:-DeskHive <bookings@deskhive.test>}
+      # The demo accounts' mail goes to its own inbox (required while DEMO_MODE is true).
+      DEMO_SMTP_HOST: ${DEMO_SMTP_HOST:-smtp.ethereal.email}
+      DEMO_SMTP_PORT: ${DEMO_SMTP_PORT:-587}
+      DEMO_SMTP_USER: ${DEMO_SMTP_USER:-set-me}
+      DEMO_SMTP_PASS: ${DEMO_SMTP_PASS:-set-me}
 
 volumes:
   deskhive-mysql:

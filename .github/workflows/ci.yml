@@ -121,7 +121,8 @@ jobs:
             -e DB_USER=root -e DB_PASSWORD=ci-root-password -e COMPANY_NAME=Northwind \
             -e JWT_SECRET=$(openssl rand -hex 32) -e JOB_TRIGGER_SECRET=$(openssl rand -hex 32) \
             -e FRONTEND_URL=http://127.0.0.1:4000 -e SMTP_HOST=smtp.ethereal.email -e SMTP_PORT=587 \
-            -e SMTP_USER=none -e SMTP_PASS=none -e DEMO_MODE=true -e DEMO_PASSWORD=ci-demo-password-1"
+            -e SMTP_USER=none -e SMTP_PASS=none -e DEMO_MODE=true -e DEMO_PASSWORD=ci-demo-password-1 \
+            -e DEMO_SMTP_HOST=smtp.ethereal.email -e DEMO_SMTP_PORT=587 -e DEMO_SMTP_USER=none -e DEMO_SMTP_PASS=none"
           docker run -d --name app --network host $ENVS deskhive
           for i in $(seq 1 60); do curl -fs http://127.0.0.1:4000/api/health && break; sleep 2; done
           curl -fs http://127.0.0.1:4000/api/health
