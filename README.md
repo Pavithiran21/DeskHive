@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Pavithiran21/DeskHive/actions/workflows/ci.yml/badge.svg)](https://github.com/Pavithiran21/DeskHive/actions/workflows/ci.yml)
 
-**Live demo: [deskhive-pavithiran.onrender.com/demo](https://deskhive-pavithiran.onrender.com/demo)** (log in as an Employee or an Admin in one click). It runs on free hosting, so the first load after a quiet spell can take a minute or two.
+**Live demo: [desk-hive-five.vercel.app/demo](https://desk-hive-five.vercel.app/demo)** (log in as an Employee or an Admin in one click). It runs on free hosting, so the first load after a quiet spell can take a minute or two.
 
 Desk and meeting-room booking for hybrid offices. Employees see what is free on the days they come in, then book, change, check in to and cancel desks and rooms. Admins set up offices, floors and spaces, set the booking rules, invite people and see how the space is used. Bookings nobody turns up for release themselves.
 
